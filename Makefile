@@ -12,21 +12,18 @@ ARCHIVER=ar rcs
 
 all: lib cleanobj
 
-lib: $(SRCDIR)electric_power.c
-	$(CC) -I$(INCLUDEDIR) $(CFLAGS) $(SRCDIR)electric_power.c -o $(LIBNAME).o
-	$(ARCHIVER) lib$(LIBNAME).a $(LIBNAME).o
+lib: $(SRCDIR)electric_power.c $(SRCDIR)grounding.c
+	$(CC) -I$(INCLUDEDIR) $(CFLAGS) $(SRCDIR)electric_power.c -o electric_power.o -lm
+	$(CC) -I$(INCLUDEDIR) $(CFLAGS) $(SRCDIR)grounding.c -o grounding.o -lm
+	$(ARCHIVER) lib$(LIBNAME).a electric_power.o grounding.o
 
-runtest: lib test cleanobj
+runtest: clean lib test cleanobj
 
 test: $(TEST).o 
-	$(CC) -o $(TEST).run $(TEST).o lib$(LIBNAME).a
+	$(CC) -o $(TEST).run $(TEST).o lib$(LIBNAME).a -lm
 
 $(TEST).o: $(EXMDIR)$(TEST).c
 	$(CC) -I$(INCLUDEDIR) $(CFLAGS) $(EXMDIR)$(TEST).c
-
-lib$(LIBNAME).a: $(SRCDIR)electric_power.c
-	$(CC) -I$(INCLUDEDIR) $(CFLAGS) $(SRCDIR)electric_power.c -o electric_power.o
-	$(ARCHIVER) lib$(LIBNAME).a electric_power.o
 
 cleanobj:
 	rm -rf *o
